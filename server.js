@@ -1,18 +1,45 @@
+require("dotenv").config();
+
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = require("./app/models");
-db.sequelize.sync(); // creates the tables
 
-app.get("/", (req, res) => res.json({ message: "Welcome to the API." }));
+db.sequelize.sync();
 
-require("./app/routes/tutorial.routes")(app); // FIX TYPO here
+var corsOptions = {
+  origin: "http://localhost:8081",
+};
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}.`));
+app.use(cors(corsOptions));
+app.options("*", cors());
+
+// parse requests of content-type - application/json
+app.use(express.json());
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the recipe backend." });
+});
+
+require("./app/routes/auth.routes.js")(app);
+require("./app/routes/ingredient.routes")(app);
+require("./app/routes/recipe.routes")(app);
+require("./app/routes/recipeStep.routes")(app);
+require("./app/routes/recipeIngredient.routes")(app);
+require("./app/routes/user.routes")(app);
+
+// set port, listen for requests
+const PORT = process.env.PORT || 3200;
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+  });
+}
+
+module.exports = app;
