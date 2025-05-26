@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 const { encrypt, getSalt, hashPassword } = require("../authentication/crypto");
 
 // Create and Save a new User
-exports.create = async (req, res) => {
+exports.signup = async (req, res) => {
   // Validate request
   if (req.body.firstName === undefined) {
     const error = new Error("First name cannot be empty for user!");
