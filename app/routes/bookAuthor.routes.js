@@ -1,10 +1,10 @@
 module.exports = (app) => {
-  const Ingredient = require("../controllers/ingredient.controller.js");
+  const bookAuthor = require("../controllers/bookAuthor.controller.js");
   var router = require("express").Router();
-  const { authenticateRoute } = require("../authentication/authentication");
+  const { authenticateRoute } = require("../authentication/authentication.js");
 
   // Create a new Ingredient
-  router.post("/ingredients/", [authenticateRoute], Ingredient.create);
+  router.post("/author/create", [authenticateRoute], bookAuthor.create);
 
   // Retrieve all Ingredient
   router.get("/ingredients/", Ingredient.findAll);
@@ -21,5 +21,5 @@ module.exports = (app) => {
   // Create a new Ingredient
   router.delete("/ingredients/", [authenticateRoute], Ingredient.deleteAll);
 
-  app.use("/recipeapi", router);
+  app.use("/booklistapi", router);
 };
