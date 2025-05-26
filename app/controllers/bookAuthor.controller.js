@@ -1,39 +1,31 @@
 const db = require("../models");
-const Ingredient = db.ingredient;
+const bookAuthor = db.bookAuthor;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Ingredient
 exports.create = (req, res) => {
   // Validate request
-  if (req.body.name === undefined) {
-    const error = new Error("Name cannot be empty for ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.unit === undefined) {
-    const error = new Error("Unit cannot be empty for ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.pricePerUnit === undefined) {
-    const error = new Error("Price per unit cannot be empty for ingredient!");
+  if (req.body.authorName === undefined) {
+    const error = new Error("Name cannot be empty for author!");
     error.statusCode = 400;
     throw error;
   }
 
   // Create a Ingredient
-  const ingredient = {
-    name: req.body.name,
-    unit: req.body.unit,
-    pricePerUnit: req.body.pricePerUnit,
+  const authorDetails = {
+    authorName: req.body.authorName,
+    userId: req.body.userId,
   };
   // Save Ingredient in the database
-  Ingredient.create(ingredient)
+  bookAuthor
+    .create(authorDetails)
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Ingredient.",
+          err.message || "Some error occurred while creating the author.",
       });
     });
 };
