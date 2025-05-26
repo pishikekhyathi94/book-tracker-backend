@@ -1,14 +1,11 @@
 module.exports = (app) => {
-  const RecipeIngredient = require("../controllers/recipeIngredient.controller.js");
+  const bookGenre = require("../controllers/bookGenre.controller.js");
   var router = require("express").Router();
-  const { authenticateRoute } = require("../authentication/authentication");
+  const { authenticateRoute } = require("../authentication/authentication.js");
 
   // Create a new Recipe Ingredient for a Recipe
-  router.post(
-    "/recipes/:recipeId/recipeIngredients/",
-    [authenticateRoute],
-    RecipeIngredient.create
-  );
+  router.post("/genre/create", [authenticateRoute], bookGenre.create);
+  router.put("/genre/:id", [authenticateRoute], bookGenre.update);
 
   // Retrieve all Recipe Ingredients
   router.get("/recipeIngredients/", RecipeIngredient.findAll);
@@ -52,5 +49,5 @@ module.exports = (app) => {
     RecipeIngredient.deleteAll
   );
 
-  app.use("/recipeapi", router);
+  app.use("/booklistapi", router);
 };
