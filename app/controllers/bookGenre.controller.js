@@ -5,31 +5,20 @@ const Op = db.Sequelize.Op;
 // Create and Save a new RecipeIngredient
 exports.create = (req, res) => {
   // Validate request
-  if (req.body.quantity === undefined) {
-    const error = new Error("Quantity cannot be empty for recipe ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.recipeId === undefined) {
-    const error = new Error("Recipe ID cannot be empty for recipe ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.ingredientId === undefined) {
-    const error = new Error(
-      "Ingredient ID cannot be empty for recipe ingredient!"
-    );
+  if (req.body.bookGenre === undefined) {
+    const error = new Error("bookGenre cannot be empty");
     error.statusCode = 400;
     throw error;
   }
 
   // Create a RecipeIngredient
-  const recipeIngredient = {
-    quantity: req.body.quantity,
-    recipeId: req.body.recipeId,
-    recipeStepId: req.body.recipeStepId ? req.body.recipeStepId : null,
-    ingredientId: req.body.ingredientId,
+  const bookGenreDetails = {
+    bookGenre: req.body.bookGenre,
+    userId: req.body.userId,
   };
-  // Save RecipeIngredient in the database
-  RecipeIngredient.create(recipeIngredient)
+  // Save bookGenreDetails in the database
+  bookGenre
+    .create(bookGenreDetails)
     .then((data) => {
       res.send(data);
     })
@@ -37,7 +26,7 @@ exports.create = (req, res) => {
       res.status(500).send({
         message:
           err.message ||
-          "Some error occurred while creating the RecipeIngredient.",
+          "Some error occurred while creating the bookGenreDetails.",
       });
     });
 };
@@ -136,23 +125,24 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  RecipeIngredient.update(req.body, {
-    where: { id: id },
-  })
+  bookGenre
+    .update(req.body, {
+      where: { id: id },
+    })
     .then((number) => {
       if (number == 1) {
         res.send({
-          message: "RecipeIngredient was updated successfully.",
+          message: "bookGenre was updated successfully.",
         });
       } else {
         res.send({
-          message: `Cannot update RecipeIngredient with id=${id}. Maybe RecipeIngredient was not found or req.body is empty!`,
+          message: `Cannot update bookGenre with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Error updating RecipeIngredient with id=" + id,
+        message: err.message || "Error updating bookGenre with id=" + id,
       });
     });
 };

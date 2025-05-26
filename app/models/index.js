@@ -17,10 +17,7 @@ db.sequelize = sequelize;
 db.bookAuthor = require("./bookAuthor.model.js")(sequelize, Sequelize);
 db.recipe = require("./recipe.model.js")(sequelize, Sequelize);
 db.recipeStep = require("./recipeStep.model.js")(sequelize, Sequelize);
-db.recipeIngredient = require("./recipeIngredient.model.js")(
-  sequelize,
-  Sequelize
-);
+db.bookGenre = require("./bookGenre.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 
@@ -47,6 +44,18 @@ db.bookAuthor.belongsTo(
   { as: "user" },
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );;
+
+// foreign key for recipeStep
+db.user.hasMany(
+  db.bookGenre,
+  { as: "bookGenre" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.bookGenre.belongsTo(
+  db.user,
+  { as: "user" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
 
 // foreign key for recipeStep
 db.recipe.hasMany(
