@@ -6,17 +6,14 @@ module.exports = (app) => {
   // Create a new Ingredient
   router.post("/author/create", [authenticateRoute], bookAuthor.create);
 
-  // Retrieve all Ingredient
-  router.get("/ingredients/", Ingredient.findAll);
-
-  // Retrieve a single Ingredient with ingredientId
-  router.get("/ingredients/:id", Ingredient.findOne);
+// Retrieve all Ingredient
+  router.get("/authors/", bookAuthor.findAll);
 
   // Update an Ingredient with ingredientId
-  router.put("/ingredients/:id", [authenticateRoute], Ingredient.update);
+  router.put("/author/:id", [authenticateRoute], bookAuthor.update);
 
   // Delete an Ingredient with ingredientId
-  router.delete("/ingredients/:id", [authenticateRoute], Ingredient.delete);
+  router.delete("/author/:id", [authenticateRoute], bookAuthor.delete);  
 
   // Create a new Ingredient
   router.delete("/ingredients/", [authenticateRoute], Ingredient.deleteAll);
