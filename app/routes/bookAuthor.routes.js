@@ -15,8 +15,7 @@ module.exports = (app) => {
   // Delete an Ingredient with ingredientId
   router.delete("/author/:id", [authenticateRoute], bookAuthor.delete);  
 
-  // Create a new Ingredient
-  router.delete("/ingredients/", [authenticateRoute], Ingredient.deleteAll);
 
   app.use("/booklistapi", router);
 };
+ 
