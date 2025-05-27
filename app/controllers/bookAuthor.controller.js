@@ -15,6 +15,8 @@ exports.create = (req, res) => {
   const authorDetails = {
     authorName: req.body.authorName,
     userId: req.body.userId,
+    booksPublished:req.body.booksPublished,
+    description:req.body.description
   };
   // Save Ingredient in the database
   bookAuthor

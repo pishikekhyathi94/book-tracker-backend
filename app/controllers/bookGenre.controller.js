@@ -1,6 +1,5 @@
 const db = require("../models");
-const RecipeIngredient = db.recipeIngredient;
-const Ingredient = db.ingredient;
+const bookGenre = db.bookGenre;
 const Op = db.Sequelize.Op;
 // Create and Save a new RecipeIngredient
 exports.create = (req, res) => {
@@ -14,6 +13,7 @@ exports.create = (req, res) => {
   // Create a RecipeIngredient
   const bookGenreDetails = {
     bookGenre: req.body.bookGenre,
+    description:req.body.description,
     userId: req.body.userId,
   };
   // Save bookGenreDetails in the database
@@ -33,24 +33,17 @@ exports.create = (req, res) => {
 
 // Retrieve all RecipeIngredients from the database.
 exports.findAll = (req, res) => {
-  const recipeIngredientId = req.query.recipeIngredientId;
-  var condition = recipeIngredientId
-    ? {
-        id: {
-          [Op.like]: `%${recipeIngredientId}%`,
-        },
-      }
-    : null;
+  const userId = req.query.userId;
 
-  RecipeIngredient.findAll({ where: condition })
+  bookGenre
+    .findAll({ where: { userId: userId } })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message ||
-          "Some error occurred while retrieving recipeIngredients.",
+          err.message || "Some error occurred while retrieving bookGenre.",
       });
     });
 };
@@ -151,24 +144,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  RecipeIngredient.destroy({
-    where: { id: id },
-  })
+  bookGenre
+    .destroy({
+      where: { id: id },
+    })
     .then((number) => {
       if (number == 1) {
         res.send({
-          message: "RecipeIngredient was deleted successfully!",
+          message: "bookGenre was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete RecipeIngredient with id=${id}. Maybe RecipeIngredient was not found!`,
+          message: `Cannot delete bookGenre with id=${id}. Maybe bookGenre was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Could not delete RecipeIngredient with id=" + id,
+        message: err.message || "Could not delete bookGenre with id=" + id,
       });
     });
 };
