@@ -4,10 +4,10 @@ module.exports = (app) => {
   var router = require("express").Router();
 
   // Login
-  router.post("/login", auth.login);
+  router.post("/signin", auth.signin);
 
   // Logout
   router.post("/logout", auth.logout);
 
-  app.use("/recipeapi", router);
+  app.use("/booklistapi", router);
 };
