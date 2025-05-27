@@ -57,7 +57,22 @@ db.bookGenre.belongsTo(
   { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
 );
 
+db.bookAuthor.hasMany(
+  db.book,
+  { as: "book" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.book.belongsTo(
+  db.bookAuthor,
+  { as: "bookAuthor" },
+  { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
+);
 
+db.bookGenre.hasMany(
+  db.book,
+  { as: "book" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
 
 
 module.exports = db;
