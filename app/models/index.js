@@ -79,5 +79,24 @@ db.book.belongsTo(
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );
 
-
+db.user.hasMany(
+  db.bookWishlist,
+  { as: "bookWishlist" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.bookWishlist.belongsTo(
+  db.user,
+  { as: "user" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.book.hasMany(
+  db.bookWishlist,
+  { as: "bookWishlist" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.bookWishlist.belongsTo(
+  db.book,
+  { as: "book" },
+  { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
+);
 module.exports = db;
