@@ -14,5 +14,8 @@ router.delete(
     Wishlist.removeBookFromWishlist
   );
   
+  router.get("/wishlist", Wishlist.findAll);
+
+
   app.use("/booklistapi", router);
 };

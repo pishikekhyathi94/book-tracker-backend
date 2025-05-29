@@ -46,3 +46,42 @@ exports.removeBookFromWishlist = (req, res) => {
       });
     });
 };
+
+exports.findAll = (req, res) => {
+  const userId = req.query.userId;
+  Wishlist.findAll({
+    where: { userId: userId },
+    include: [
+      {
+        model: db.book,
+        as: "book",
+        include: [
+          {
+            model: db.bookAuthor,
+            as: "bookAuthor",
+          },
+          {
+            model: db.bookGenre,
+            as: "bookGenre",
+          },
+        ],
+      },
+    ],
+    order: [["createdAt", "ASC"]],
+  })
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Book for user with id=${userId}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Error retrieving Book for user with id=" + userId,
+      });
+    });
+};
