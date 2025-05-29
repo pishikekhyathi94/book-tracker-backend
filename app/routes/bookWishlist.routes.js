@@ -8,5 +8,11 @@ module.exports = (app) => {
     [authenticateRoute],
     Wishlist.addBookToWishlist
   );
+router.delete(
+    "/wishlist/remove/book/:id",
+    [authenticateRoute],
+    Wishlist.removeBookFromWishlist
+  );
+  
   app.use("/booklistapi", router);
 };
