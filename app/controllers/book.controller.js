@@ -109,3 +109,26 @@ exports.findOne = (req, res) => {
       });
     });
 };
+
+exports.update = (req, res) => {
+  const id = req.params.id;
+  Book.update(req.body, {
+    where: { id: id },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "Book was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update Book with id=${id}. Maybe Book was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error updating Book with id=" + id,
+      });
+    });
+};
