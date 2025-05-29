@@ -8,6 +8,6 @@ module.exports = (app) => {
   router.get("/all/books", Book.findAll);
   router.delete("/delete/book/:id", [authenticateRoute], Book.delete);
   router.get("/book/:id", Book.findOne);
-
+  router.put("/update/book/:id", [authenticateRoute], Book.update);
   app.use("/booklistapi", router);
 };

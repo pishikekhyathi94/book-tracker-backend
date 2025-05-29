@@ -20,6 +20,7 @@ db.recipeStep = require("./recipeStep.model.js")(sequelize, Sequelize);
 db.bookGenre = require("./bookGenre.model.js")(sequelize, Sequelize);
 db.session = require("./session.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
+db.bookWishlist = require("./bookWishlist.model.js")(sequelize, Sequelize);
 
 // foreign key for session
 db.user.hasMany(
