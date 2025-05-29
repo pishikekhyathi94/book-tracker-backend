@@ -6,6 +6,7 @@ module.exports = (app) => {
   // Create a new Recipe
   router.post("/create/book", [authenticateRoute], Book.create);
   router.get("/all/books", Book.findAll);
+  router.delete("/delete/book/:id", [authenticateRoute], Book.delete);
 
   app.use("/booklistapi", router);
 };
