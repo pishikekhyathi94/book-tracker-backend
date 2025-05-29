@@ -7,6 +7,7 @@ module.exports = (app) => {
   router.post("/create/book", [authenticateRoute], Book.create);
   router.get("/all/books", Book.findAll);
   router.delete("/delete/book/:id", [authenticateRoute], Book.delete);
+  router.get("/book/:id", Book.findOne);
 
   app.use("/booklistapi", router);
 };

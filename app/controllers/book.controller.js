@@ -94,3 +94,18 @@ exports.delete = (req, res) => {
       });
     });
 };
+
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  RecipeIngredient.findByPk(id)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Error retrieving RecipeIngredient with id=" + id,
+      });
+    });
+};
