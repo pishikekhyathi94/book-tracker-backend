@@ -175,8 +175,20 @@ exports.searchBook = (req, res) => {
     ],
     order: [["createdAt", "ASC"]],
   })
-    .then((data) => {
+    .then(async(data) => {
       if (data) {
+        const updatedData = await Promise.all(
+          data.map(async (item) => {
+            let existsInWishlist = await db.bookWishlist.findOne({
+              where: { bookId: item.id, userId: item.userId },
+            });
+            if (existsInWishlist) {
+              item.isWishlisted = true;
+              item.dataValues.wishlistId = existsInWishlist.id;
+            }
+            return item;
+          })
+        );
         res.send(data);
       } else {
         res.status(404).send({
