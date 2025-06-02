@@ -132,3 +132,42 @@ exports.update = (req, res) => {
       });
     });
 };
+
+exports.searchBook = (req, res) => {
+  bookname = req.query.bookName;
+  var condition = bookname
+    ? {
+        bookName: {
+          [Op.like]: `%${bookname}%`,
+        },
+      }
+    : [];
+  Book.findAll({
+    where: condition,
+    include: [
+      {
+        model: db.bookAuthor,
+        as: "bookAuthor",
+      },
+      {
+        model: db.bookGenre,
+        as: "bookGenre",
+      },
+    ],
+    order: [["createdAt", "ASC"]],
+  })
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Book with id=${id}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error retrieving Book with id=" + id,
+      });
+    });
+};

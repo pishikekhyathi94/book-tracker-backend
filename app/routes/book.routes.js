@@ -9,5 +9,7 @@ module.exports = (app) => {
   router.delete("/delete/book/:id", [authenticateRoute], Book.delete);
   router.get("/book/:id", Book.findOne);
   router.put("/update/book/:id", [authenticateRoute], Book.update);
+  router.get("/search/books", Book.searchBook);
+
   app.use("/booklistapi", router);
 };
