@@ -43,7 +43,14 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
+  let condition;
+  if (req.query.userId) {
+    condition = { userId: req.query.userId };
+  } else {
+    condition = {};
+  }
   Book.findAll({
+    where: condition,
     include: [
       {
         model: db.bookAuthor,
@@ -56,9 +63,21 @@ exports.findAll = (req, res) => {
     ],
     order: [["createdAt", "ASC"]],
   })
-    .then((data) => {
+    .then(async (data) => {
       if (data) {
-        res.send(data);
+        const updatedData = await Promise.all(
+          data.map(async (item) => {
+            let existsInWishlist = await db.bookWishlist.findOne({
+              where: { bookId: item.id, userId: item.userId },
+            });
+            if (existsInWishlist) {
+              item.isWishlisted = true;
+              item.dataValues.wishlistId = existsInWishlist.id;
+            }
+            return item;
+          })
+        );
+        res.send(updatedData);
       } else {
         res.status(404).send({
           message: `Cannot find  books.`,
