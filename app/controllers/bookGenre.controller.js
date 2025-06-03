@@ -1,67 +1,53 @@
 const db = require("../models");
-const RecipeIngredient = db.recipeIngredient;
-const Ingredient = db.ingredient;
+const bookGenre = db.bookGenre;
 const Op = db.Sequelize.Op;
 // Create and Save a new RecipeIngredient
 exports.create = (req, res) => {
   // Validate request
-  if (req.body.quantity === undefined) {
-    const error = new Error("Quantity cannot be empty for recipe ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.recipeId === undefined) {
-    const error = new Error("Recipe ID cannot be empty for recipe ingredient!");
-    error.statusCode = 400;
-    throw error;
-  } else if (req.body.ingredientId === undefined) {
-    const error = new Error(
-      "Ingredient ID cannot be empty for recipe ingredient!"
-    );
-    error.statusCode = 400;
-    throw error;
+  if (req.body.bookGenre === undefined) {
+    return res.status(400).send("bookGenre cannot be empty");
   }
 
   // Create a RecipeIngredient
-  const recipeIngredient = {
-    quantity: req.body.quantity,
-    recipeId: req.body.recipeId,
-    recipeStepId: req.body.recipeStepId ? req.body.recipeStepId : null,
-    ingredientId: req.body.ingredientId,
+  const bookGenreDetails = {
+    bookGenre: req.body.bookGenre,
+    userId: req.body.userId,
+    description:req.body.description,
   };
-  // Save RecipeIngredient in the database
-  RecipeIngredient.create(recipeIngredient)
+  // Save bookGenreDetails in the database
+  bookGenre
+    .findOne({
+      where: { bookGenre: req.body.bookGenre },
+    })
+    .then((existingGenre) => {
+      if (existingGenre) {
+        return res.status(400).send({ message: "Genre already exists." });
+      }
+      return bookGenre.create(bookGenreDetails);
+    })
     .then((data) => {
-      res.send(data);
+      if (data) res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the RecipeIngredient.",
+    return res.status(500).json({
+        message: "Some error occurred while creating the bookGenreDetails.",
       });
     });
 };
 
 // Retrieve all RecipeIngredients from the database.
 exports.findAll = (req, res) => {
-  const recipeIngredientId = req.query.recipeIngredientId;
-  var condition = recipeIngredientId
-    ? {
-        id: {
-          [Op.like]: `%${recipeIngredientId}%`,
-        },
-      }
-    : null;
+  const userId = req.query.userId;
 
-  RecipeIngredient.findAll({ where: condition })
+  bookGenre
+    .findAll({ where: { userId: userId } })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message ||
-          "Some error occurred while retrieving recipeIngredients.",
+          err.message || "Some error occurred while retrieving bookGenre.",
       });
     });
 };
@@ -136,23 +122,30 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  RecipeIngredient.update(req.body, {
-    where: { id: id },
-  })
-    .then((number) => {
-      if (number == 1) {
-        res.send({
-          message: "RecipeIngredient was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update RecipeIngredient with id=${id}. Maybe RecipeIngredient was not found or req.body is empty!`,
-        });
+  // Check if the new bookGenre already exists for the user (excluding current record)
+  bookGenre
+    .findOne({
+      where: {
+        bookGenre: req.body.bookGenre,
+        id: { [Op.ne]: id },
+      },
+    })
+    .then((existingGenre) => {
+      if (existingGenre) {
+        return res.status(400).send({ message: "Genre already exists." });
       }
+      return bookGenre.update(req.body, { where: { id: id } });
+    })
+    .then((result) => {
+      // result is [numberOfAffectedRows] if update was called
+      return res
+        .status(200)
+        .json({ message: "book genre updated successfully" });
+      // else: response already sent (genre exists)
     })
     .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error updating RecipeIngredient with id=" + id,
+      return res.status(500).send({
+        message: "Error updating bookGenre with id=" + id,
       });
     });
 };
@@ -161,24 +154,24 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   const id = req.params.id;
 
-  RecipeIngredient.destroy({
-    where: { id: id },
-  })
+  bookGenre
+    .destroy({
+      where: { id: id },
+    })
     .then((number) => {
       if (number == 1) {
         res.send({
-          message: "RecipeIngredient was deleted successfully!",
+          message: "bookGenre was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete RecipeIngredient with id=${id}. Maybe RecipeIngredient was not found!`,
+          message: `Cannot delete bookGenre with id=${id}. Maybe bookGenre was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Could not delete RecipeIngredient with id=" + id,
+        message: err.message || "Could not delete bookGenre with id=" + id,
       });
     });
 };

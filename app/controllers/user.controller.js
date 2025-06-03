@@ -3,9 +3,10 @@ const User = db.user;
 const Session = db.session;
 const Op = db.Sequelize.Op;
 const { encrypt, getSalt, hashPassword } = require("../authentication/crypto");
+const { response } = require("../../server");
 
 // Create and Save a new User
-exports.create = async (req, res) => {
+exports.signup = async (req, res) => {
   // Validate request
   if (req.body.firstName === undefined) {
     const error = new Error("First name cannot be empty for user!");
@@ -33,7 +34,8 @@ exports.create = async (req, res) => {
   })
     .then(async (data) => {
       if (data) {
-        return "This email is already in use.";
+        return res.status(400).json({message:"This email is already in use."});
+    
       } else {
         console.log("email not found");
 

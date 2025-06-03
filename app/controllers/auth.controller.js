@@ -5,7 +5,7 @@ const Session = db.session;
 const Op = db.Sequelize.Op;
 const { encrypt } = require("../authentication/crypto");
 
-exports.login = async (req, res) => {
+exports.signin = async (req, res) => {
   let { userId } = await authenticate(req, res, "credentials");
 
   if (userId !== undefined) {
