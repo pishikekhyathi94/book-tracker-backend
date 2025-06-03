@@ -15,6 +15,8 @@ exports.create = (req, res) => {
   const authorDetails = {
     authorName: req.body.authorName,
     userId: req.body.userId,
+    booksPublished:req.body.booksPublished,
+          description:req.body.description,
   };
   // Check if author already exists
   bookAuthor
@@ -72,6 +74,7 @@ exports.update = (req, res) => {
       .findOne({
         where: {
           authorName: req.body.authorName,
+          
           id: { [Op.ne]: id },
         },
       })

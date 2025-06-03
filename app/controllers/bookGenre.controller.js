@@ -12,6 +12,7 @@ exports.create = (req, res) => {
   const bookGenreDetails = {
     bookGenre: req.body.bookGenre,
     userId: req.body.userId,
+    description:req.body.description,
   };
   // Save bookGenreDetails in the database
   bookGenre
@@ -28,10 +29,8 @@ exports.create = (req, res) => {
       if (data) res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the bookGenreDetails.",
+    return res.status(500).json({
+        message: "Some error occurred while creating the bookGenreDetails.",
       });
     });
 };
