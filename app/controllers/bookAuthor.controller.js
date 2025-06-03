@@ -15,21 +15,37 @@ exports.create = (req, res) => {
   const authorDetails = {
     authorName: req.body.authorName,
     userId: req.body.userId,
-    booksPublished:req.body.booksPublished,
-    description:req.body.description
   };
-  // Save Ingredient in the database
+  // Check if author already exists
   bookAuthor
-    .create(authorDetails)
-    .then((data) => {
-      res.send(data);
+    .findOne({
+      where: {
+        authorName: req.body.authorName,
+      },
+    })
+    .then((existingAuthor) => {
+      if (existingAuthor) {
+        return res.status(400).send({ message: "Author already exists" });
+      }
+      // Save Ingredient in the database
+      return bookAuthor
+        .create(authorDetails)
+        .then((data) => {
+          res.send(data);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the author.",
+          });
+        });
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the author.",
+        message: err.message || "Some error occurred while checking author.",
       });
     });
+  return;
 };
 
 exports.findAll = (req, res) => {
@@ -50,26 +66,69 @@ exports.findAll = (req, res) => {
 // Update a Ingredient by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
-  bookAuthor
-    .update(req.body, {
-      where: { id: id },
-    })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Author details were updated successfully.",
+  // Check if the new authorName already exists (excluding current author)
+  if (req.body.authorName) {
+    bookAuthor
+      .findOne({
+        where: {
+          authorName: req.body.authorName,
+          id: { [Op.ne]: id },
+        },
+      })
+      .then((existingAuthor) => {
+        if (existingAuthor) {
+          return res.status(400).send({ message: "Author already exists" });
+        }
+        // Proceed with update if not exists
+        bookAuthor
+          .update(req.body, {
+            where: { id: id },
+          })
+          .then((num) => {
+            if (num == 1) {
+              res.send({
+                message: "Author details were updated successfully.",
+              });
+            } else {
+              res.send({
+                message: `Cannot update Author with id=${id}. Maybe Author was not found or req.body is empty!`,
+              });
+            }
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message: err.message || "Error updating Author with id=" + id,
+            });
+          });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Error checking existing author.",
         });
-      } else {
-        res.send({
-          message: `Cannot update Author with id=${id}. Maybe Author was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error updating Author with id=" + id,
       });
-    });
+  } else {
+    // No authorName change, just update
+    bookAuthor
+      .update(req.body, {
+        where: { id: id },
+      })
+      .then((num) => {
+        if (num == 1) {
+          res.send({
+            message: "Author details were updated successfully.",
+          });
+        } else {
+          res.send({
+            message: `Cannot update Author with id=${id}. Maybe Author was not found or req.body is empty!`,
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({
+          message: err.message || "Error updating Author with id=" + id,
+        });
+      });
+  }
 };
 
 // Delete a Ingredient with the specified id in the request
