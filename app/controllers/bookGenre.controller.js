@@ -5,22 +5,27 @@ const Op = db.Sequelize.Op;
 exports.create = (req, res) => {
   // Validate request
   if (req.body.bookGenre === undefined) {
-    const error = new Error("bookGenre cannot be empty");
-    error.statusCode = 400;
-    throw error;
+    return res.status(400).send("bookGenre cannot be empty");
   }
 
   // Create a RecipeIngredient
   const bookGenreDetails = {
     bookGenre: req.body.bookGenre,
-    description:req.body.description,
     userId: req.body.userId,
   };
   // Save bookGenreDetails in the database
   bookGenre
-    .create(bookGenreDetails)
+    .findOne({
+      where: { bookGenre: req.body.bookGenre },
+    })
+    .then((existingGenre) => {
+      if (existingGenre) {
+        return res.status(400).send({ message: "Genre already exists." });
+      }
+      return bookGenre.create(bookGenreDetails);
+    })
     .then((data) => {
-      res.send(data);
+      if (data) res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
@@ -118,24 +123,30 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
   const id = req.params.id;
 
+  // Check if the new bookGenre already exists for the user (excluding current record)
   bookGenre
-    .update(req.body, {
-      where: { id: id },
+    .findOne({
+      where: {
+        bookGenre: req.body.bookGenre,
+        id: { [Op.ne]: id },
+      },
     })
-    .then((number) => {
-      if (number == 1) {
-        res.send({
-          message: "bookGenre was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update bookGenre with id=${id}.`,
-        });
+    .then((existingGenre) => {
+      if (existingGenre) {
+        return res.status(400).send({ message: "Genre already exists." });
       }
+      return bookGenre.update(req.body, { where: { id: id } });
+    })
+    .then((result) => {
+      // result is [numberOfAffectedRows] if update was called
+      return res
+        .status(200)
+        .json({ message: "book genre updated successfully" });
+      // else: response already sent (genre exists)
     })
     .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error updating bookGenre with id=" + id,
+      return res.status(500).send({
+        message: "Error updating bookGenre with id=" + id,
       });
     });
 };

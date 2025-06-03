@@ -29,6 +29,9 @@ exports.create = (req, res) => {
     userId: req.body.userId,
     bookAuthorId: req.body.authorId,
     bookGenreId: req.body.genreId,
+    isWishlisted: false,
+    onlineBuyingLink: req.body.onlineBuyingLink,
+    onlinePDFLink: req.body.onlinePDFLink,
   };
   // Save Recipe in the database
   Book.create(bookDetails)
@@ -68,7 +71,7 @@ exports.findAll = (req, res) => {
         const updatedData = await Promise.all(
           data.map(async (item) => {
             let existsInWishlist = await db.bookWishlist.findOne({
-              where: { bookId: item.id, userId: item.userId },
+              where: { bookId: item.id },
             });
             if (existsInWishlist) {
               item.isWishlisted = true;
@@ -87,44 +90,6 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Error retrieving Published Recipes.",
-      });
-    });
-};
-
-exports.delete = (req, res) => {
-  const id = req.params.id;
-  Book.destroy({
-    where: { id: id },
-  })
-    .then((number) => {
-      if (number == 1) {
-        res.send({
-          message: "Book was deleted successfully!",
-        });
-      } else {
-        res.send({
-          message: `Cannot delete Book with id=${id}. Maybe Book was not found!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Could not delete Book with id=" + id,
-      });
-    });
-};
-
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  RecipeIngredient.findByPk(id)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Error retrieving RecipeIngredient with id=" + id,
       });
     });
 };
@@ -152,6 +117,63 @@ exports.update = (req, res) => {
     });
 };
 
+exports.findOne = (req, res) => {
+  let bookId = req.params.id;
+  Book.findOne({
+    where: { id: bookId },
+    include: [
+      {
+        model: db.bookAuthor,
+        as: "bookAuthor",
+      },
+      {
+        model: db.bookGenre,
+        as: "bookGenre",
+      },
+    ],
+    order: [["createdAt", "ASC"]],
+  })
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find books.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error retrieving Published books.",
+      });
+    });
+};
+
+exports.delete = (req, res) => {
+  const id = req.params.id;
+  Book.destroy({
+    where: { id: id },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "Book was deleted successfully!",
+        });
+      } else {
+        res.send({
+          message: `Cannot delete Book with id=${id}. Maybe Book was not found!`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Could not delete Book with id=" + id,
+      });
+    });
+};
+
+
+
 exports.searchBook = (req, res) => {
   bookname = req.query.bookName;
   var condition = bookname
@@ -175,12 +197,12 @@ exports.searchBook = (req, res) => {
     ],
     order: [["createdAt", "ASC"]],
   })
-    .then(async(data) => {
+    .then(async (data) => {
       if (data) {
         const updatedData = await Promise.all(
           data.map(async (item) => {
             let existsInWishlist = await db.bookWishlist.findOne({
-              where: { bookId: item.id, userId: item.userId },
+              where: { bookId: item.id },
             });
             if (existsInWishlist) {
               item.isWishlisted = true;
@@ -189,16 +211,16 @@ exports.searchBook = (req, res) => {
             return item;
           })
         );
-        res.send(data);
+        res.send(updatedData);
       } else {
         res.status(404).send({
-          message: `Cannot find Book with id=${id}.`,
+          message: `Cannot find Recipe with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Error retrieving Book with id=" + id,
+        message: err.message || "Error retrieving Recipe with id=" + id,
       });
     });
 };

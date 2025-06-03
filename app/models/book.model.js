@@ -12,6 +12,15 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    isWishlisted: {
+      type: Sequelize.BOOLEAN,
+    },
+    onlineBuyingLink: {
+      type: Sequelize.STRING,
+    },
+    onlinePDFLink: {
+      type: Sequelize.STRING,
+    },
   });
   return Book;
 };
