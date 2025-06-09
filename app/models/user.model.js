@@ -22,6 +22,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BLOB,
       allowNull: false,
     },
+    notification_viewed: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true,
+    },
   });
 
   return User;
