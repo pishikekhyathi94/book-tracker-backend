@@ -35,7 +35,30 @@ exports.create = (req, res) => {
   };
   // Save Recipe in the database
   Book.create(bookDetails)
-    .then((data) => {
+    .then(async (data) => {
+      // Update bridge tables with required data
+      const authorIds = Array.isArray(req.body.authorId)
+        ? req.body.authorId
+        : [req.body.authorId];
+      const genreIds = Array.isArray(req.body.genreId)
+        ? req.body.genreId
+        : [req.body.genreId];
+
+      // Set authors
+      await data.setAuthors(authorIds.filter(Boolean));
+      // Set genres
+      await data.setGenres(genreIds.filter(Boolean));
+      // Update UserBooks bridge table with user and book ids
+      if (req.body.userId && data.id) {
+        await db.userBooks.create({
+          userId: req.body.userId,
+          bookId: data.id,
+        });
+      }
+      await db.user.update({ notification_viewed: false }, { where: {} });
+      await db.notification.create({
+        notification: `New book create with book name as ${req.body.bookName}`,
+      });
       res.send(data);
     })
     .catch((err) => {

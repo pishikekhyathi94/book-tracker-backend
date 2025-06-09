@@ -31,6 +31,8 @@ exports.signin = async (req, res) => {
         lastName: user.lastName,
         id: user.id,
         token: token,
+        notification_viewed: user.notification_viewed,
+
       };
       res.send(userInfo);
     });
