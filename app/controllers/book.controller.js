@@ -48,7 +48,7 @@ exports.create = (req, res) => {
       await data.setAuthors(authorIds.filter(Boolean));
       // Set genres
       await data.setGenres(genreIds.filter(Boolean));
-      // Update UserBooks bridge table with user and book ids
+
       if (req.body.userId && data.id) {
         await db.userBooks.create({
           userId: req.body.userId,
@@ -56,6 +56,7 @@ exports.create = (req, res) => {
         });
       }
       await db.user.update({ notification_viewed: false }, { where: {} });
+      
       await db.notification.create({
         notification: `New book create with book name as ${req.body.bookName}`,
       });

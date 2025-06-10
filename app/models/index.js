@@ -112,7 +112,6 @@ db.bookWishlist.belongsTo(
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );
 
-
 db.book.belongsToMany(db.bookAuthor, {
   through: "BookAuthorsBooks",
   as: "authors",
@@ -126,7 +125,6 @@ db.bookAuthor.belongsToMany(db.book, {
   otherKey: "bookId",
 });
 
-// Bridge Table: Book ↔ Genre
 db.book.belongsToMany(db.bookGenre, {
   through: "BookGenresBooks",
   as: "genres",
