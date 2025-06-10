@@ -43,20 +43,16 @@ exports.create = (req, res) => {
       const genreIds = Array.isArray(req.body.genreId)
         ? req.body.genreId
         : [req.body.genreId];
-
+      const userIds = Array.isArray(req.body.userId)
+        ? req.body.userId
+        : [req.body.userId];
       // Set authors
       await data.setAuthors(authorIds.filter(Boolean));
       // Set genres
       await data.setGenres(genreIds.filter(Boolean));
+      await data.setUsers(userIds.filter(Boolean));
 
-      if (req.body.userId && data.id) {
-        await db.userBooks.create({
-          userId: req.body.userId,
-          bookId: data.id,
-        });
-      }
       await db.user.update({ notification_viewed: false }, { where: {} });
-      
       await db.notification.create({
         notification: `New book create with book name as ${req.body.bookName}`,
       });
@@ -195,7 +191,6 @@ exports.delete = (req, res) => {
       });
     });
 };
-
 
 
 exports.searchBook = (req, res) => {
