@@ -248,3 +248,26 @@ exports.searchBook = (req, res) => {
       });
     });
 };
+
+exports.findBookByTitle = (req, res) => {
+  let title = req.query.title;
+  Book.findOne({
+    where: { bookName: title },
+  })
+    .then((data) => {
+      if (data) {
+        res
+          .status(400)
+          .json({ message: "book with same title already exists" });
+      } else {
+        res.status(200).send({
+          message: `Cannot find books.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error retrieving Published books.",
+      });
+    });
+};

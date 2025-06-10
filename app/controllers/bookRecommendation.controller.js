@@ -2,7 +2,7 @@ const db = require("../models");
 const Op = db.Sequelize.Op;
 const { CohereClient } = require("cohere-ai");
 const cohere = new CohereClient({
-  token: "xGnLCpu23rmtYSHdmpzvIkrBzbNcenOq7QS0xTQS",
+  token: process.env.COHERE_API_KEY,
 });
 const Book = db.book;
 const Wishlist = db.bookWishlist;
