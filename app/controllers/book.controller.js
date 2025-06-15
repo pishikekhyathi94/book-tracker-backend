@@ -32,6 +32,9 @@ exports.create = (req, res) => {
     isWishlisted: false,
     onlineBuyingLink: req.body.onlineBuyingLink,
     onlinePDFLink: req.body.onlinePDFLink,
+    releaseDate: req.body.releaseDate,
+
+
   };
   // Save Recipe in the database
   Book.create(bookDetails)
