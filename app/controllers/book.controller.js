@@ -266,3 +266,32 @@ exports.findBookByTitle = (req, res) => {
       });
     });
 };
+
+exports.updateBookReading = (req, res) => {
+  const bookId = req.body.bookId;
+  const userId = req.body.userId;
+  if ((req.query.type = "startreading")) {
+    req.body.startedReadingTime = Date.now();
+  }
+  console.log("userId", userId);
+  db.UserBooks.update(req.body, {
+    where: { userId: userId, bookId: bookId },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "Book was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update Book with id=${id}. Maybe Book was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Error updating Book with id=" + id,
+      });
+    });
+};
