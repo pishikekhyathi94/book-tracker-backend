@@ -10,6 +10,8 @@ module.exports = (app) => {
   router.get("/book/:id", Book.findOne);
   router.put("/update/book/:id", [authenticateRoute], Book.update);
   router.get("/search/books", Book.searchBook);
+  router.get("/title/book", Book.findBookByTitle);
+  router.put("/book/reading", Book.updateBookReading);
 
   app.use("/booklistapi", router);
 };

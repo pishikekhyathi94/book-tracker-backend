@@ -29,12 +29,13 @@ app.get("/", (req, res) => {
 
 require("./app/routes/auth.routes.js")(app);
 require("./app/routes/bookAuthor.routes.js")(app);
-require("./app/routes/recipe.routes")(app);
-require("./app/routes/recipeStep.routes")(app);
 require("./app/routes/user.routes")(app);
 require("./app/routes/book.routes.js")(app);
 require("./app/routes/bookGenre.routes")(app);
 require("./app/routes/bookWishlist.routes.js")(app)
+require("./app/routes/notification.routes.js")(app);
+require("./app/routes/bookRecommendation.routes.js")(app);
+
 // set port, listen for requests
 const PORT = process.env.PORT || 3200;
 if (process.env.NODE_ENV !== "test") {

@@ -35,7 +35,27 @@ exports.create = (req, res) => {
   };
   // Save Recipe in the database
   Book.create(bookDetails)
-    .then((data) => {
+    .then(async (data) => {
+      // Update bridge tables with required data
+      const authorIds = Array.isArray(req.body.authorId)
+        ? req.body.authorId
+        : [req.body.authorId];
+      const genreIds = Array.isArray(req.body.genreId)
+        ? req.body.genreId
+        : [req.body.genreId];
+      const userIds = Array.isArray(req.body.userId)
+        ? req.body.userId
+        : [req.body.userId];
+      // Set authors
+      await data.setAuthors(authorIds.filter(Boolean));
+      // Set genres
+      await data.setGenres(genreIds.filter(Boolean));
+      await data.setUsers(userIds.filter(Boolean));
+
+      await db.user.update({ notification_viewed: false }, { where: {} });
+      await db.notification.create({
+        notification: `New book create with book name as ${req.body.bookName}`,
+      });
       res.send(data);
     })
     .catch((err) => {
@@ -173,7 +193,6 @@ exports.delete = (req, res) => {
 };
 
 
-
 exports.searchBook = (req, res) => {
   bookname = req.query.bookName;
   var condition = bookname
@@ -221,6 +240,58 @@ exports.searchBook = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Error retrieving Recipe with id=" + id,
+      });
+    });
+};
+
+exports.findBookByTitle = (req, res) => {
+  let title = req.query.title;
+  Book.findOne({
+    where: { bookName: title },
+  })
+    .then((data) => {
+      if (data) {
+        res
+          .status(400)
+          .json({ message: "book with same title already exists" });
+      } else {
+        res.status(200).send({
+          message: `Cannot find books.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Error retrieving Published books.",
+      });
+    });
+};
+
+exports.updateBookReading = (req, res) => {
+  const bookId = req.body.bookId;
+  const userId = req.body.userId;
+  if ((req.query.type = "startreading")) {
+    req.body.startedReadingTime = Date.now();
+  }
+  console.log("userId", userId);
+  db.UserBooks.update(req.body, {
+    where: { userId: userId, bookId: bookId },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "Book was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update Book with id=${id}. Maybe Book was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Error updating Book with id=" + id,
       });
     });
 };
