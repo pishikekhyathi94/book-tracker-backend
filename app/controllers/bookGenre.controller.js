@@ -52,71 +52,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-exports.findAllForRecipe = (req, res) => {
-  const recipeId = req.params.recipeId;
-  RecipeIngredient.findAll({
-    where: { recipeId: recipeId },
-    include: [
-      {
-        model: Ingredient,
-        as: "ingredient",
-        required: true,
-      },
-    ],
-  })
-    .then((data) => {
-      res.send(data);
-    })
 
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving recipeIngredients for a recipe.",
-      });
-    });
-};
-
-// Find all RecipeIngredients for a recipe step and include the ingredients
-exports.findAllForRecipeStepWithIngredients = (req, res) => {
-  const recipeStepId = req.params.recipeStepId;
-  RecipeIngredient.findAll({
-    where: { recipeStepId: recipeStepId },
-    include: [
-      {
-        model: Ingredient,
-        as: "ingredient",
-        required: true,
-      },
-    ],
-  })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while retrieving recipeIngredients for a recipe step.",
-      });
-    });
-};
-
-// Find a single RecipeIngredient with an id
-exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  RecipeIngredient.findByPk(id)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Error retrieving RecipeIngredient with id=" + id,
-      });
-    });
-};
 
 // Update a RecipeIngredient by the id in the request
 exports.update = (req, res) => {
@@ -176,22 +112,4 @@ exports.delete = (req, res) => {
     });
 };
 
-// Delete all RecipeIngredients from the database.
-exports.deleteAll = (req, res) => {
-  RecipeIngredient.destroy({
-    where: {},
-    truncate: false,
-  })
-    .then((number) => {
-      res.send({
-        message: `${number} RecipeIngredients were deleted successfully!`,
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while removing all recipeIngredients.",
-      });
-    });
-};
+
