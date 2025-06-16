@@ -21,7 +21,15 @@ db.session = require("./session.model.js")(sequelize, Sequelize);
 db.user = require("./user.model.js")(sequelize, Sequelize);
 db.bookWishlist = require("./bookWishlist.model.js")(sequelize, Sequelize);
 db.notification = require("./notification.model.js")(sequelize, Sequelize);
-
+db.BookAuthorsBooks = require("./bookAuthorBooks.model.js")(
+  sequelize,
+  Sequelize
+);
+db.BookGenresBooks = require("./bookGenreBooks.model.js")(
+  sequelize,
+  Sequelize
+);
+db.UserBooks = require("./userBooks.model.js")(sequelize, Sequelize);
 // foreign key for session
 db.user.hasMany(
   db.session,
@@ -45,6 +53,7 @@ db.bookAuthor.belongsTo(
   { as: "user" },
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );
+
 
 // foreign key for recipeStep
 db.user.hasMany(
@@ -113,40 +122,46 @@ db.bookWishlist.belongsTo(
 );
 
 db.book.belongsToMany(db.bookAuthor, {
-  through: "BookAuthorsBooks",
+  through: db.BookAuthorsBooks,
   as: "authors",
   foreignKey: "bookId",
   otherKey: "authorId",
 });
 db.bookAuthor.belongsToMany(db.book, {
-  through: "BookAuthorsBooks",
+  through: db.BookAuthorsBooks,
   as: "books",
   foreignKey: "authorId",
   otherKey: "bookId",
 });
+// Removed duplicate association with the same alias "books" to fix the error
+
+// Bridge Table: Book ↔ Genre
 
 db.book.belongsToMany(db.bookGenre, {
-  through: "BookGenresBooks",
+  through: db.BookGenresBooks,
   as: "genres",
   foreignKey: "bookId",
   otherKey: "genreId",
 });
 db.bookGenre.belongsToMany(db.book, {
-  through: "BookGenresBooks",
+  through: db.BookGenresBooks,
   as: "books",
   foreignKey: "genreId",
   otherKey: "bookId",
 });
+
 db.user.belongsToMany(db.book, {
-  through: "UserBooks",
+  through: db.UserBooks,
   as: "books",
   foreignKey: "userId",
   otherKey: "bookId",
 });
 db.book.belongsToMany(db.user, {
-  through: "UserBooks",
+  through: db.UserBooks,
   as: "users",
   foreignKey: "bookId",
   otherKey: "userId",
 });
+// foreign keys for recipeIngredient
+
 module.exports = db;

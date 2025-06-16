@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to the recipe backend." });
+  res.json({ message: "Welcome to the book backend." });
 });
 
 require("./app/routes/auth.routes.js")(app);

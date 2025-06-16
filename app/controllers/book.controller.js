@@ -1,8 +1,5 @@
 const db = require("../models");
 const Book = db.book;
-const RecipeStep = db.recipeStep;
-const RecipeIngredient = db.recipeIngredient;
-const Ingredient = db.ingredient;
 const Op = db.Sequelize.Op;
 // Create and Save a new Recipe
 exports.create = (req, res) => {
@@ -32,6 +29,9 @@ exports.create = (req, res) => {
     isWishlisted: false,
     onlineBuyingLink: req.body.onlineBuyingLink,
     onlinePDFLink: req.body.onlinePDFLink,
+    releaseDate: req.body.releaseDate,
+
+
   };
   // Save Recipe in the database
   Book.create(bookDetails)
@@ -263,6 +263,35 @@ exports.findBookByTitle = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Error retrieving Published books.",
+      });
+    });
+};
+
+exports.updateBookReading = (req, res) => {
+  const bookId = req.body.bookId;
+  const userId = req.body.userId;
+  if ((req.query.type = "startreading")) {
+    req.body.startedReadingTime = Date.now();
+  }
+  console.log("userId", userId);
+  db.UserBooks.update(req.body, {
+    where: { userId: userId, bookId: bookId },
+  })
+    .then((number) => {
+      if (number == 1) {
+        res.send({
+          message: "Book was updated successfully.",
+        });
+      } else {
+        res.send({
+          message: `Cannot update Book with id=${id}. Maybe Book was not found or req.body is empty!`,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Error updating Book with id=" + id,
       });
     });
 };
