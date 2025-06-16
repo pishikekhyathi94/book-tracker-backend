@@ -21,6 +21,9 @@ module.exports = (sequelize, Sequelize) => {
     onlinePDFLink: {
       type: Sequelize.STRING,
     },
+    releaseDate:{
+      type: Sequelize.DATE
+    }
   });
   return Book;
 };
