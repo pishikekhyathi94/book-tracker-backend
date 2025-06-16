@@ -30,27 +30,50 @@ exports.create = (req, res) => {
     onlineBuyingLink: req.body.onlineBuyingLink,
     onlinePDFLink: req.body.onlinePDFLink,
     releaseDate: req.body.releaseDate,
-
-
   };
   // Save Recipe in the database
   Book.create(bookDetails)
     .then(async (data) => {
       // Update bridge tables with required data
-      const authorIds = Array.isArray(req.body.authorId)
-        ? req.body.authorId
-        : [req.body.authorId];
-      const genreIds = Array.isArray(req.body.genreId)
-        ? req.body.genreId
-        : [req.body.genreId];
-      const userIds = Array.isArray(req.body.userId)
-        ? req.body.userId
-        : [req.body.userId];
+
+      // Fetch author details and update BookAuthorsBooks table
+      const author = await db.bookAuthor.findOne({
+        where: { id: req.body.authorId },
+      });
+
+      await db.BookAuthorsBooks.create({
+        authorId: author.id,
+        authorName: author.authorName,
+        bookId: data.id,
+        bookTitle: data.bookName,
+        description: data.bookDescription,
+      });
+
+      // Update BookGenreBooks bridge table with required data
+      const genre = await db.bookGenre.findOne({
+        where: { id: req.body.genreId },
+      });
+
+      await db.BookGenresBooks.create({
+        genreId: genre.id,
+        genreName: genre.bookGenre,
+        bookId: data.id,
+        bookTitle: data.bookName,
+        description: data.bookDescription,
+      });
+      const user = await db.user.findOne({
+        where: { id: req.body.userId },
+      });
+
+      await db.UserBooks.create({
+        bookName: data.bookName,
+        description: data.bookDescription,
+        userEmail: user.email,
+        imageUrl: data.imageUrl,
+        userId: req.body.userId,
+        bookId: data.id,
+      });
       // Set authors
-      await data.setAuthors(authorIds.filter(Boolean));
-      // Set genres
-      await data.setGenres(genreIds.filter(Boolean));
-      await data.setUsers(userIds.filter(Boolean));
 
       await db.user.update({ notification_viewed: false }, { where: {} });
       await db.notification.create({
@@ -59,6 +82,7 @@ exports.create = (req, res) => {
       res.send(data);
     })
     .catch((err) => {
+      console.log("err", err);
       res.status(500).send({
         message: err.message || "Some error occurred while creating the Book.",
       });
@@ -72,6 +96,7 @@ exports.findAll = (req, res) => {
   } else {
     condition = {};
   }
+  console.log("condition", condition);
   Book.findAll({
     where: condition,
     include: [
@@ -83,10 +108,15 @@ exports.findAll = (req, res) => {
         model: db.bookGenre,
         as: "bookGenre",
       },
+      {
+        model: db.bookRatings,
+        as: "bookRatings",
+      },
     ],
     order: [["createdAt", "ASC"]],
   })
     .then(async (data) => {
+      console.log(data);
       if (data) {
         const updatedData = await Promise.all(
           data.map(async (item) => {
@@ -97,9 +127,14 @@ exports.findAll = (req, res) => {
               item.isWishlisted = true;
               item.dataValues.wishlistId = existsInWishlist.id;
             }
+            const userBook = await db.UserBooks.findOne({
+              where: { bookId: item.id, userId: item.userId },
+            });
+            item.dataValues.bookStatus = userBook;
             return item;
           })
         );
+
         res.send(updatedData);
       } else {
         res.status(404).send({
@@ -108,6 +143,7 @@ exports.findAll = (req, res) => {
       }
     })
     .catch((err) => {
+      console.log("err", err);
       res.status(500).send({
         message: err.message || "Error retrieving Published Recipes.",
       });
@@ -150,11 +186,22 @@ exports.findOne = (req, res) => {
         model: db.bookGenre,
         as: "bookGenre",
       },
+      {
+        model: db.bookRatings,
+        as: "bookRatings",
+      },
     ],
     order: [["createdAt", "ASC"]],
   })
-    .then((data) => {
+    .then(async (data) => {
       if (data) {
+        const userBooks = await db.UserBooks.findOne({
+          userId: data.userId,
+          bookId: req.params.id,
+        });
+        console.log(userBooks);
+        data.dataValues.bookStatus = userBooks;
+
         res.send(data);
       } else {
         res.status(404).send({

@@ -29,6 +29,7 @@ db.BookGenresBooks = require("./bookGenreBooks.model.js")(
   sequelize,
   Sequelize
 );
+db.bookRatings = require("./bookRating.model.js")(sequelize, Sequelize);
 db.UserBooks = require("./userBooks.model.js")(sequelize, Sequelize);
 // foreign key for session
 db.user.hasMany(
@@ -54,6 +55,27 @@ db.bookAuthor.belongsTo(
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );
 
+db.user.hasMany(
+  db.bookRatings,
+  { as: "bookRatings" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.bookRatings.belongsTo(
+  db.user,
+  { as: "user" },
+  { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
+);
+
+db.book.hasMany(
+  db.bookRatings,
+  { as: "bookRatings" },
+  { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
+);
+db.bookRatings.belongsTo(
+  db.book,
+  { as: "book" },
+  { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
+);
 
 // foreign key for recipeStep
 db.user.hasMany(
