@@ -1,8 +1,5 @@
 const db = require("../models");
 const Book = db.book;
-const RecipeStep = db.recipeStep;
-const RecipeIngredient = db.recipeIngredient;
-const Ingredient = db.ingredient;
 const Op = db.Sequelize.Op;
 // Create and Save a new Recipe
 exports.create = (req, res) => {

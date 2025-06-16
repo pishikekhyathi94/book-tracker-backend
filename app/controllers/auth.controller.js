@@ -41,7 +41,6 @@ exports.signin = async (req, res) => {
 
 exports.logout = async (req, res) => {
   let auth = req.get("authorization");
-  console.log(auth);
   if (
     auth != null &&
     auth.startsWith("Bearer ") &&
