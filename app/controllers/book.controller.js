@@ -91,10 +91,10 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
   let condition;
-  if (req.query.userId) {
-    condition = { userId: req.query.userId };
+  if (req.query.type == "all") {
+    condition = {  };
   } else {
-    condition = {};
+    condition = { userId: req.query.userId };
   }
   console.log("condition", condition);
   Book.findAll({
@@ -121,7 +121,7 @@ exports.findAll = (req, res) => {
         const updatedData = await Promise.all(
           data.map(async (item) => {
             let existsInWishlist = await db.bookWishlist.findOne({
-              where: { bookId: item.id },
+              where: { bookId: item.id,userId:req.query.userId },
             });
             if (existsInWishlist) {
               item.isWishlisted = true;
