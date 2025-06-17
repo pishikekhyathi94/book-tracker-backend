@@ -16,7 +16,7 @@ jobs:
       DB_USER: ${{ secrets.AWS_DB_USER }}
       DB_NAME: ${{ secrets.AWS_DB_NAME }}
       SECRET_KEY: ${{secrets.AWS_SECRET_KEY }}
-      COHERE_API_KEY: ${{secrets.RECOMMENDATIONS_API_KEY }}
+      RECOMMENDATIONS_API_KEY: ${{secrets.RECOMMENDATIONS_API_KEY }}
 
     steps:
       - uses: actions/checkout@v2
