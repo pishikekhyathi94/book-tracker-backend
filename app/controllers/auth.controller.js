@@ -41,7 +41,6 @@ exports.signin = async (req, res) => {
 
 exports.logout = async (req, res) => {
   let auth = req.get("authorization");
-  console.log(auth);
   if (
     auth != null &&
     auth.startsWith("Bearer ") &&
@@ -50,10 +49,12 @@ exports.logout = async (req, res) => {
     let token = auth.slice(7);
     let sessionId = await decrypt(token);
     if (sessionId == null) return;
-    return await Session.destroy({ where: { id: sessionId } }).catch(
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
+    await Session.destroy({ where: { id: sessionId } }).catch((error) => {
+      console.log(error);
+    });
+    return res.status(200).json({
+      message: "user logout successfull",
+    });
+  }
 };
+

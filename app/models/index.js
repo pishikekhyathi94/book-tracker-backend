@@ -25,10 +25,11 @@ db.BookAuthorsBooks = require("./bookAuthorBooks.model.js")(
   sequelize,
   Sequelize
 );
-db.BookGenresBooks = require("./bookGenresBooks.model.js")(
+db.BookGenresBooks = require("./bookGenreBooks.model.js")(
   sequelize,
   Sequelize
 );
+db.bookRatings = require("./bookRating.model.js")(sequelize, Sequelize);
 db.UserBooks = require("./userBooks.model.js")(sequelize, Sequelize);
 // foreign key for session
 db.user.hasMany(
