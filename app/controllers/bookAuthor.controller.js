@@ -2,7 +2,7 @@ const db = require("../models");
 const bookAuthor = db.bookAuthor;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Ingredient
+// Create and Save a new book
 exports.create = (req, res) => {
   // Validate request
   if (req.body.authorName === undefined) {
@@ -11,7 +11,7 @@ exports.create = (req, res) => {
     throw error;
   }
 
-  // Create a Ingredient
+  // Create a book
   const authorDetails = {
     authorName: req.body.authorName,
     userId: req.body.userId,
@@ -29,7 +29,7 @@ exports.create = (req, res) => {
       if (existingAuthor) {
         return res.status(400).send({ message: "Author already exists" });
       }
-      // Save Ingredient in the database
+      // Save book in the database
       return bookAuthor
         .create(authorDetails)
         .then((data) => {
@@ -65,7 +65,7 @@ exports.findAll = (req, res) => {
     });
 };
 
-// Update a Ingredient by the id in the request
+// Update a book by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
   // Check if the new authorName already exists (excluding current author)
@@ -134,7 +134,7 @@ exports.update = (req, res) => {
   }
 };
 
-// Delete a Ingredient with the specified id in the request
+// Delete a book with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 

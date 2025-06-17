@@ -43,7 +43,7 @@ db.session.belongsTo(
   { foreignKey: { allowNull: false }, onDelete: "CASCADE" }
 );
 
-// foreign key for recipe
+// foreign key for book
 db.user.hasMany(
   db.bookAuthor,
   { as: "bookAuthor" },
@@ -77,7 +77,7 @@ db.bookRatings.belongsTo(
   { foreignKey: { allowNull: true }, onDelete: "CASCADE" }
 );
 
-// foreign key for recipeStep
+// foreign key for bookStep
 db.user.hasMany(
   db.bookGenre,
   { as: "bookGenre" },
@@ -184,6 +184,6 @@ db.book.belongsToMany(db.user, {
   foreignKey: "bookId",
   otherKey: "userId",
 });
-// foreign keys for recipeIngredient
+// foreign keys for bookbook
 
 module.exports = db;

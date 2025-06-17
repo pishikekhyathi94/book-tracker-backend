@@ -1,24 +1,23 @@
 const db = require("../models");
 const Book = db.book;
 const Op = db.Sequelize.Op;
-// Create and Save a new Recipe
 exports.create = (req, res) => {
   // Validate request
   if (req.body.bookName === undefined) {
-    const error = new Error("Name cannot be empty for recipe!");
+    const error = new Error("Name cannot be empty for book!");
     error.statusCode = 400;
     throw error;
   } else if (req.body.bookDescription === undefined) {
-    const error = new Error("Description cannot be empty for recipe!");
+    const error = new Error("Description cannot be empty for book!");
     error.statusCode = 400;
     throw error;
   } else if (req.body.bookCoverImage === undefined) {
-    const error = new Error("Servings cannot be empty for recipe!");
+    const error = new Error("Servings cannot be empty for book!");
     error.statusCode = 400;
     throw error;
   }
 
-  // Create a Recipe
+  // Create a book
   const bookDetails = {
     bookName: req.body.bookName,
     bookDescription: req.body.bookDescription,
@@ -31,7 +30,7 @@ exports.create = (req, res) => {
     onlinePDFLink: req.body.onlinePDFLink,
     releaseDate: req.body.releaseDate,
   };
-  // Save Recipe in the database
+  // Save book in the database
   Book.create(bookDetails)
     .then(async (data) => {
       // Update bridge tables with required data
@@ -145,7 +144,7 @@ exports.findAll = (req, res) => {
     .catch((err) => {
       console.log("err", err);
       res.status(500).send({
-        message: err.message || "Error retrieving Published Recipes.",
+        message: err.message || "Error retrieving Published books.",
       });
     });
 };
@@ -280,13 +279,13 @@ exports.searchBook = (req, res) => {
         res.send(updatedData);
       } else {
         res.status(404).send({
-          message: `Cannot find Recipe with id=${id}.`,
+          message: `Cannot find book with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Error retrieving Recipe with id=" + id,
+        message: err.message || "Error retrieving book with id=" + id,
       });
     });
 };
