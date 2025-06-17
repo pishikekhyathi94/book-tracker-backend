@@ -3,7 +3,7 @@ module.exports = (app) => {
   var router = require("express").Router();
   const { authenticateRoute } = require("../authentication/authentication.js");
 
-  // Create a new Recipe Ingredient for a Recipe
+  // Create a new book book for a book
   router.post("/genre/create", [authenticateRoute], bookGenre.create);
   router.get("/genre/", bookGenre.findAll);
   

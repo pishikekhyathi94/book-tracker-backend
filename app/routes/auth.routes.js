@@ -7,7 +7,7 @@ module.exports = (app) => {
   router.post("/signin", auth.signin);
 
   // Logout
-  router.post("/logout", auth.logout);
+  router.get("/logout", auth.logout);
 
   app.use("/booklistapi", router);
 };

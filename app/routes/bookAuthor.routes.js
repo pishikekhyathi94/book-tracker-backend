@@ -3,16 +3,16 @@ module.exports = (app) => {
   var router = require("express").Router();
   const { authenticateRoute } = require("../authentication/authentication.js");
 
-  // Create a new Ingredient
+  // Create a new book
   router.post("/author/create", [authenticateRoute], bookAuthor.create);
 
-// Retrieve all Ingredient
+// Retrieve all book
   router.get("/authors/", bookAuthor.findAll);
 
-  // Update an Ingredient with ingredientId
+  // Update an book with bookId
   router.put("/author/:id", [authenticateRoute], bookAuthor.update);
 
-  // Delete an Ingredient with ingredientId
+  // Delete an book with bookId
   router.delete("/author/:id", [authenticateRoute], bookAuthor.delete);  
 
 

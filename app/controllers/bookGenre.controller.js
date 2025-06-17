@@ -1,14 +1,14 @@
 const db = require("../models");
 const bookGenre = db.bookGenre;
 const Op = db.Sequelize.Op;
-// Create and Save a new RecipeIngredient
+// Create and Save a new book
 exports.create = (req, res) => {
   // Validate request
   if (req.body.bookGenre === undefined) {
     return res.status(400).send("bookGenre cannot be empty");
   }
 
-  // Create a RecipeIngredient
+  // Create a bookbook
   const bookGenreDetails = {
     bookGenre: req.body.bookGenre,
     userId: req.body.userId,
@@ -35,7 +35,7 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all RecipeIngredients from the database.
+// Retrieve all bookbooks from the database.
 exports.findAll = (req, res) => {
   const userId = req.query.userId;
 
@@ -54,7 +54,7 @@ exports.findAll = (req, res) => {
 
 
 
-// Update a RecipeIngredient by the id in the request
+// Update a bookbook by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
@@ -86,7 +86,7 @@ exports.update = (req, res) => {
     });
 };
 
-// Delete a RecipeIngredient with the specified id in the request
+// Delete a bookbook with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 

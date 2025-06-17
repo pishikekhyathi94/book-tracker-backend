@@ -9,7 +9,7 @@ exports.create = (req, res) => {
     throw error;
   }
 
-  // Create a Ingredient
+  // Create a book
   const bookRatings = {
     rating: req.body.rating,
     userId: req.body.userId,
