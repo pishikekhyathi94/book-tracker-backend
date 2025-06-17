@@ -44,7 +44,7 @@ jobs:
           SOURCE: "deploy/"
           REMOTE_HOST: "ec2-13-218-196-80.compute-1.amazonaws.com"
           REMOTE_USER: ubuntu
-          TARGET: "nodeapps/read-my-books-backend-team4"
+          TARGET: "nodeapps/book-tracker-backend"
       - name: Execute SSH commmands on remote server
         uses: JimCronqvist/action-ssh@master
         env:
